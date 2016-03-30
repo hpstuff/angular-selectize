@@ -39,7 +39,6 @@ angular.module('selectize', []).value('selectizeConfig', {}).directive("selectiz
 
         selectize.addOption(curr, true);
 
-        selectize.refreshOptions(false); // updates results if user has entered a query
         setSelectizeValue();
       }
 
@@ -52,6 +51,13 @@ angular.module('selectize', []).value('selectizeConfig', {}).directive("selectiz
         selectize.$control.toggleClass('ng-pristine', modelCtrl.$pristine);
 
         if (!angular.equals(selectize.items, scope.ngModel)) {
+          if (Array.isArray(scope.ngModel)) {
+              scope.ngModel.filter(function(model){
+                  if (scope.options.filter(function(option){ return option.value !== model; }).length > 0){
+                      selectize.createItem(model, false);
+                  }
+              });
+          }
           selectize.setValue(scope.ngModel, true);
         }
       }
@@ -83,6 +89,8 @@ angular.module('selectize', []).value('selectizeConfig', {}).directive("selectiz
 
         setSelectizeOptions(scope.options);
 
+        selectize.$control.toggleClass('hide-input', settings.hideInput || false);
+
         //provides a way to access the selectize element from an
         //angular controller
         if (scope.config.onInitialize) {
@@ -90,7 +98,7 @@ angular.module('selectize', []).value('selectizeConfig', {}).directive("selectiz
         }
 
         scope.$watchCollection('options', setSelectizeOptions);
-        scope.$watch('ngModel', setSelectizeValue);
+        scope.$watch('ngModel.length', setSelectizeValue);
         scope.$watch('ngDisabled', toggle);
       };
 
