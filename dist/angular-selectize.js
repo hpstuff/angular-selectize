@@ -90,6 +90,7 @@ angular.module('selectize', []).value('selectizeConfig', {}).directive("selectiz
         setSelectizeOptions(scope.options);
 
         selectize.$control.toggleClass('hide-input', settings.hideInput || false);
+        selectize.$control_input.attr('readonly', settings.hideInput || false);
 
         //provides a way to access the selectize element from an
         //angular controller
